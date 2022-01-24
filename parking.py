@@ -2,21 +2,31 @@
 App created to keep track of parking lot spaces and cars which are occupying each spot
 """
 import sqlite3
-
+from sqlite3 import Error
 #Establishing number of spaces in a  parking lot
-no_of_spaces = int(input("How many parking spaces are in a parking lot?: "))
-print(f'Okay, creating a parking lot with {no_of_spaces} spaces.')
-number_spaces = list(zip([item for item in range(1,(no_of_spaces + 1))]))
+def Connection(database):
+    conn = None
+    try:
+        conn = sqlite3.connect(database)
+    except Error as error:
+        print(error)
+    return conn
 
-conn = sqlite3.connect(":memory:")
-cur = conn.cursor()
+def ParkingCreation(conn):
+    no_of_spaces = int(input("How many parking spaces are in a parking lot?: "))
+    print(f'Okay, creating a parking lot with {no_of_spaces} spaces.')
+    number_spaces = list(zip([item for item in range(1,(no_of_spaces + 1))]))
 
-cur.execute('''CREATE TABLE IF NOT EXISTS spaces
-            (space_id int)''')
+    cur = conn.cursor()
 
-cur.executemany('INSERT INTO spaces VALUES (?)', number_spaces)
-conn.commit()
+    cur.execute('''CREATE TABLE IF NOT EXISTS spaces
+                (space_id int)''')
 
-cur.execute('SELECT * FROM spaces')
-data = cur.fetchall()
-print ("Here is a list of spaces:", data)
+    cur.executemany('INSERT INTO spaces VALUES (?)', number_spaces)
+    conn.commit()
+def ListOfSpaces(conn):
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM spaces')
+    data = cur.fetchall()
+    print ("Here is a list of spaces:", data)
+    
