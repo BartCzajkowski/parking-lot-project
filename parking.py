@@ -2,8 +2,11 @@
 App created to keep track of parking lot spaces and cars which are occupying each spot
 """
 import sqlite3
-from sqlite3 import Error
+from tkinter import *
+from tkinter import ttk
+from tkinter.ttk import *
 
+from click import command
 #Functions
 
 conn = sqlite3.connect("database.db")
@@ -36,8 +39,12 @@ def spaces_list():
     cur.execute('SELECT * FROM spaces')
     data = cur.fetchall()
     print ("Here is a list of spaces:\n(Space number, Car plate number)")
-    for n in range (len(data)):
-        print(data[n])
+    print_list = ""
+    for item in data:
+        print_list += str(item) + "\n"
+    lbl_parking_list = ttk.Label( text=print_list)
+    lbl_parking_list.grid(row=3, columnspan=6)
+
     cur.connection.close()
 
 def spaces_assign():
@@ -73,3 +80,37 @@ def spaces_create():
     with cur.connection:
         cur.execute('INSERT OR ABORT INTO spaces (space_id) VALUES (?)', (space_number))
     cur.connection.close()
+
+#TKinter basics
+
+root = Tk()
+
+ttk.Style().configure("TButton", padding=6, relief="flat",
+   background="#ccc")
+
+lbl_name = ttk.Label(text="Aplikacja do nadzoru nad parkingiem")
+lbl_name.grid(row=0, columnspan=6)
+
+lbl_parking_spaces = ttk.Label(text="Oto dostępne miejsca:")
+lbl_parking_spaces.grid(row=2, columnspan=6)
+spaces_list()
+
+btn_create_parking = ttk.Button(text="Utwórz nowy parking")
+btn_create_parking.grid(row=1, column=0)
+
+btn_delete_parking = ttk.Button(text="Usuń aktualny parking")
+btn_delete_parking.grid(row=1, column=1)
+
+create_parking_btn = ttk.Button(text="Przypisz miejsce parkingowe")
+create_parking_btn.grid(row=1, column=2)
+
+create_parking_btn = ttk.Button(text="Zmień przypisanie miejsca")
+create_parking_btn.grid(row=1, column=3)
+
+create_parking_btn = ttk.Button(text="Usuń miejsca parkingowe")
+create_parking_btn.grid(row=1, column=4)
+
+create_parking_btn = ttk.Button(text="Utwórz dodatkowe miejsca")
+create_parking_btn.grid(row=1, column=5)
+
+root.mainloop()
